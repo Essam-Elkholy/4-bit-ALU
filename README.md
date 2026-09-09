@@ -2,41 +2,109 @@
 
 # Tiny Tapeout Verilog Project Template
 
-- [Read the documentation for project](docs/info.md)
+# 4-bit ALU – Tiny Tapeout Project
+
+- [Read the documentation for project](https://github.com/Essam-Elkholy/test/blob/main/docs/info.md)
+
+## How it works
+
+This project implements a 4-bit Arithmetic Logic Unit (ALU) for Tiny Tapeout.
+
+The ALU has two 4-bit input operands:
+
+- A = `ui_in[3:0]`
+- B = `ui_in[7:4]`
+
+The ALU operation is selected using:
+
+- `uio_in[3:0]`
+
+The ALU supports arithmetic, logic, comparison, and shift operations.
+
+### Supported operations
+
+| ALU_FUN | Operation |
+|---|---|
+| `0000` | Addition |
+| `0001` | Subtraction |
+| `0010` | Multiplication |
+| `0011` | Division |
+| `0100` | AND |
+| `0101` | OR |
+| `0110` | NAND |
+| `0111` | NOR |
+| `1000` | XOR |
+| `1001` | XNOR |
+| `1010` | A == B |
+| `1011` | A > B |
+| `1100` | A < B |
+| `1101` | Shift Right |
+| `1110` | Shift Left |
+| `1111` | No Operation |
+
+The ALU output is registered on the rising edge of the clock.
+
+## Outputs
+
+The 4-bit ALU result is available on:
+
+- `uo_out[3:0]`
+
+The upper output bits are unused:
+
+- `uo_out[7:4]`
+
+The ALU also provides status flags:
+
+- `uio_out[0]` = Carry Flag
+- `uio_out[1]` = Arithmetic Flag
+- `uio_out[2]` = Logic Flag
+- `uio_out[3]` = Comparison Flag
+- `uio_out[4]` = Shift Flag
+
+## How to test
+
+The project includes a Cocotb testbench.
+
+For example, to test:
+
+`5 + 3`
+
+Set:
+
+`A = 5`
+
+`B = 3`
+
+`ALU_FUN = 0000`
+
+The Tiny Tapeout input mapping is:
+
+`ui_in[3:0] = 0101`
+
+`ui_in[7:4] = 0011`
+
+`uio_in[3:0] = 0000`
+
+After the next rising clock edge:
+
+`uo_out[3:0] = 1000`
+
+which is decimal:
+`8`
+The Cocotb tests verify the arithmetic, logic, comparison, and shift operations automatically.
+
+
+
+
 
 ## What is Tiny Tapeout?
-
-Tiny Tapeout is an educational project that aims to make it easier and cheaper than ever to get your digital and analog designs manufactured on a real chip.
-
-To learn more and get started, visit https://tinytapeout.com.
-
-## Set up your Verilog project
-
-1. Add your Verilog files to the `src` folder.
-2. Edit the [info.yaml](info.yaml) and update information about your project, paying special attention to the `source_files` and `top_module` properties. If you are upgrading an existing Tiny Tapeout project, check out our [online info.yaml migration tool](https://tinytapeout.github.io/tt-yaml-upgrade-tool/).
-3. Edit [docs/info.md](docs/info.md) and add a description of your project.
-4. Adapt the testbench to your design. See [test/README.md](test/README.md) for more information.
-
-The GitHub action will automatically build the ASIC files using [LibreLane](https://www.zerotoasiccourse.com/terminology/librelane/).
-
-## Enable GitHub actions to build the results page
-
-- [Enabling GitHub Pages](https://tinytapeout.com/faq/#my-github-action-is-failing-on-the-pages-part)
-
-## Resources
-
-- [FAQ](https://tinytapeout.com/faq/)
-- [Digital design lessons](https://tinytapeout.com/digital_design/)
-- [Learn how semiconductors work](https://tinytapeout.com/siliwiz/)
-- [Join the community](https://tinytapeout.com/discord)
-- [Build your design locally](https://www.tinytapeout.com/guides/local-hardening/)
-
-## What next?
-
-- [Submit your design to the next shuttle](https://app.tinytapeout.com/).
-- Edit [this README](README.md) and explain your design, how it works, and how to test it.
-- Share your project on your social network of choice:
-  - LinkedIn [#tinytapeout](https://www.linkedin.com/search/results/content/?keywords=%23tinytapeout) [@TinyTapeout](https://www.linkedin.com/company/100708654/)
-  - Mastodon [#tinytapeout](https://chaos.social/tags/tinytapeout) [@matthewvenn](https://chaos.social/@matthewvenn)
-  - X (formerly Twitter) [#tinytapeout](https://twitter.com/hashtag/tinytapeout) [@tinytapeout](https://twitter.com/tinytapeout)
-  - Bluesky [@tinytapeout.com](https://bsky.app/profile/tinytapeout.com)
+Tiny Tapeout is an educational project that aims to make it easier and cheaper than ever to get digital and analog designs manufactured on a real chip.
+To learn more and get started, visit:
+https://tinytapeout.com
+Resources
+- Tiny Tapeout FAQ
+- Digital design lessons
+- Learn how semiconductors work
+- Tiny Tapeout Discord
+- Local hardening guide
