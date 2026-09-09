@@ -5,7 +5,7 @@
    that can be driven / tested by the cocotb test.py.
 */
 
-module tt_um_alu_4bit (
+module tt_um_alu (
     input  wire [7:0] ui_in,
     output wire [7:0] uo_out,
 
