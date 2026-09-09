@@ -1,27 +1,147 @@
 /*
- * Copyright (c) 2024 Your Name
+ * Copyright (c) 2026 Essam Mohammed ELkholy
  * SPDX-License-Identifier: Apache-2.0
  */
 
 `default_nettype none
 
-module tt_um_example (
-    input  wire [7:0] ui_in,    // Dedicated inputs
-    output wire [7:0] uo_out,   // Dedicated outputs
-    input  wire [7:0] uio_in,   // IOs: Input path
-    output wire [7:0] uio_out,  // IOs: Output path
-    output wire [7:0] uio_oe,   // IOs: Enable path (active high: 0=input, 1=output)
-    input  wire       ena,      // always 1 when the design is powered, so you can ignore it
-    input  wire       clk,      // clock
-    input  wire       rst_n     // reset_n - low to reset
+module tt_um_ALU (
+    input  wire [3:0] A, B,        // 4-bit input signals
+    input  wire [3:0] ALU_FUN,     // 4-bit ALU selection signal
+    input  wire       CLK,         // Clock signal
+
+    output reg  [3:0] ALU_OUT,     // 4-bit ALU output
+    output reg        Carry_Flag,
+    output reg        Arith_Flag,
+    output reg        Logic_Flag,
+    output reg        CMP_Flag,
+    output reg        Shift_Flag
 );
 
-  // All output pins must be assigned. If not used, assign to 0.
-  assign uo_out  = ui_in + uio_in;  // Example: ou_out is the sum of ui_in and uio_in
-  assign uio_out = 0;
-  assign uio_oe  = 0;
+// Internal signal
+reg [3:0] ALU_OUT_Comb;
 
-  // List all unused inputs to prevent warnings
-  wire _unused = &{ena, clk, rst_n, 1'b0};
+
+// Registered output
+always @(posedge CLK) begin
+    ALU_OUT <= ALU_OUT_Comb;
+end
+
+
+// Combinational ALU logic
+always @(*) begin
+
+    // Default values
+    Carry_Flag  = 1'b0;
+    Arith_Flag  = 1'b0;
+    Logic_Flag  = 1'b0;
+    CMP_Flag    = 1'b0;
+    Shift_Flag  = 1'b0;
+    ALU_OUT_Comb = 4'b0000;
+
+    case (ALU_FUN)
+
+        // Arithmetic operations
+        4'b0000: begin
+            {Carry_Flag, ALU_OUT_Comb} = A + B;
+            Arith_Flag = 1'b1;
+        end
+
+        4'b0001: begin
+            {Carry_Flag, ALU_OUT_Comb} = A - B;
+            Arith_Flag = 1'b1;
+        end
+
+        4'b0010: begin
+            ALU_OUT_Comb = A * B;
+            Arith_Flag = 1'b1;
+        end
+
+        4'b0011: begin
+            ALU_OUT_Comb = A / B;
+            Arith_Flag = 1'b1;
+        end
+
+
+        // Logic operations
+        4'b0100: begin
+            ALU_OUT_Comb = A & B;
+            Logic_Flag = 1'b1;
+        end
+
+        4'b0101: begin
+            ALU_OUT_Comb = A | B;
+            Logic_Flag = 1'b1;
+        end
+
+        4'b0110: begin
+            ALU_OUT_Comb = ~(A & B);
+            Logic_Flag = 1'b1;
+        end
+
+        4'b0111: begin
+            ALU_OUT_Comb = ~(A | B);
+            Logic_Flag = 1'b1;
+        end
+
+        4'b1000: begin
+            ALU_OUT_Comb = A ^ B;
+            Logic_Flag = 1'b1;
+        end
+
+        4'b1001: begin
+            ALU_OUT_Comb = ~(A ^ B);
+            Logic_Flag = 1'b1;
+        end
+
+
+        // Comparison operations
+        4'b1010: begin
+            CMP_Flag = 1'b1;
+
+            if (A == B)
+                ALU_OUT_Comb = 4'b0001;
+            else
+                ALU_OUT_Comb = 4'b0000;
+        end
+
+        4'b1011: begin
+            CMP_Flag = 1'b1;
+
+            if (A > B)
+                ALU_OUT_Comb = 4'b0010;
+            else
+                ALU_OUT_Comb = 4'b0000;
+        end
+
+        4'b1100: begin
+            CMP_Flag = 1'b1;
+
+            if (A < B)
+                ALU_OUT_Comb = 4'b0011;
+            else
+                ALU_OUT_Comb = 4'b0000;
+        end
+
+
+        // Shift operations
+        4'b1101: begin
+            ALU_OUT_Comb = A >> 1;
+            Shift_Flag = 1'b1;
+        end
+
+        4'b1110: begin
+            ALU_OUT_Comb = A << 1;
+            Shift_Flag = 1'b1;
+        end
+
+
+        // Default
+        default: begin
+            ALU_OUT_Comb = 4'b0000;
+        end
+
+    endcase
+end
 
 endmodule
