@@ -4,35 +4,68 @@
 /* This testbench just instantiates the module and makes some convenient wires
    that can be driven / tested by the cocotb test.py.
 */
-module tb ();
 
-  // Dump the signals to a FST file. You can view it with gtkwave or surfer.
-  initial begin
-    $dumpfile("tb.fst");
-    $dumpvars(0, tb);
-    #1;
-  end
+module tt_um_alu_4bit (
+    input  wire [7:0] ui_in,
+    output wire [7:0] uo_out,
 
-  // Wire up the inputs and outputs:
-  reg clk;
-  reg rst_n;
-  reg ena;
-  reg [7:0] ui_in;
-  reg [7:0] uio_in;
-  wire [7:0] uo_out;
-  wire [7:0] uio_out;
-  wire [7:0] uio_oe;
+    input  wire [7:0] uio_in,
+    output wire [7:0] uio_out,
+    output wire [7:0] uio_oe,
 
-  // Replace tt_um_example with your module name:
-  tt_um_example user_project (
-      .ui_in  (ui_in),    // Dedicated inputs
-      .uo_out (uo_out),   // Dedicated outputs
-      .uio_in (uio_in),   // IOs: Input path
-      .uio_out(uio_out),  // IOs: Output path
-      .uio_oe (uio_oe),   // IOs: Enable path (active high: 0=input, 1=output)
-      .ena    (ena),      // enable - goes high when design is selected
-      .clk    (clk),      // clock
-      .rst_n  (rst_n)     // not reset
-  );
+    input  wire       ena,
+    input  wire       clk,
+    input  wire       rst_n
+);
+
+    wire [3:0] alu_out;
+
+    wire carry_flag;
+    wire arith_flag;
+    wire logic_flag;
+    wire cmp_flag;
+    wire shift_flag;
+
+
+    ALU alu_inst (
+        .A          (ui_in[3:0]),
+        .B          (ui_in[7:4]),
+        .ALU_FUN    (uio_in[3:0]),
+        .CLK        (clk),
+
+        .ALU_OUT    (alu_out),
+        .Carry_Flag (carry_flag),
+        .Arith_Flag (arith_flag),
+        .Logic_Flag (logic_flag),
+        .CMP_Flag   (cmp_flag),
+        .Shift_Flag (shift_flag)
+    );
+
+
+    // ALU result
+    assign uo_out[3:0] = alu_out;
+
+    // Unused dedicated outputs
+    assign uo_out[7:4] = 4'b0000;
+
+
+    // Flags
+    assign uio_out[0] = carry_flag;
+    assign uio_out[1] = arith_flag;
+    assign uio_out[2] = logic_flag;
+    assign uio_out[3] = cmp_flag;
+    assign uio_out[4] = shift_flag;
+
+    // Unused outputs
+    assign uio_out[7:5] = 3'b000;
+
+
+    // uio[4:0] are outputs
+    // uio[7:5] remain inputs
+    assign uio_oe = 8'b0001_1111;
+
+
+    // Prevent unused input warnings
+    wire _unused = &{ena, rst_n, uio_in[7:4], 1'b0};
 
 endmodule
