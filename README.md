@@ -1,6 +1,5 @@
 ![](../../workflows/gds/badge.svg) ![](../../workflows/docs/badge.svg) ![](../../workflows/test/badge.svg) ![](../../workflows/fpga/badge.svg)
-
-# Tiny Tapeout Verilog Project Template
+## XD
 
 # 4-bit ALU – Tiny Tapeout Project
 
@@ -94,17 +93,3 @@ which is decimal:
 `8`
 The Cocotb tests verify the arithmetic, logic, comparison, and shift operations automatically.
 
-
-
-
-
-## What is Tiny Tapeout?
-Tiny Tapeout is an educational project that aims to make it easier and cheaper than ever to get digital and analog designs manufactured on a real chip.
-To learn more and get started, visit:
-https://tinytapeout.com
-Resources
-- Tiny Tapeout FAQ
-- Digital design lessons
-- Learn how semiconductors work
-- Tiny Tapeout Discord
-- Local hardening guide
